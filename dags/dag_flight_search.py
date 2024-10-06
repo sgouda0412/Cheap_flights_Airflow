@@ -27,7 +27,7 @@ try:
 except Exception as e:
     print("Error  {} ".format(e))
     print("Everything is good....")
-
+    print("Feels Good")
 
 # -------------------------------------------------------------------------
 THRESHOLD = 8000  # MXN threshold value to consider a round flight as cheap
