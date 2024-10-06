@@ -6,6 +6,8 @@ import logging
 import os
 import sys
 import __future__
+import pathlib
+import asyncio
 
 # Dictionary of airlines IATA codes
 dict_airlines = {"AM": "Aeromexico", "Y4": "Volaris", "VB": "VivaAerobus"}
