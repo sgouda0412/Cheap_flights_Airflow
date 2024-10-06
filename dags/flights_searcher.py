@@ -3,13 +3,10 @@ import datetime
 import requests
 import pandas as pd
 import logging
+import os
 
 # Dictionary of airlines IATA codes
-dict_airlines = {
-    "AM": "Aeromexico",
-    "Y4": "Volaris",
-    "VB": "VivaAerobus"
-}
+dict_airlines = {"AM": "Aeromexico", "Y4": "Volaris", "VB": "VivaAerobus"}
 
 # Dictionary of cities IATA codes
 dict_cities = {
@@ -42,8 +39,9 @@ dict_cities = {
     "OAX": "Oaxaca",
     "TLC": "Toluca",
     "TAM": "Tampico",
-    "TGZ": "Tuxtla Gutiérrez"
+    "TGZ": "Tuxtla Gutiérrez",
 }
+
 
 def search_flights(origin, destination, api_token):
 
@@ -75,31 +73,59 @@ def search_flights(origin, destination, api_token):
 
     # Loop through all the remaining Fridays and Sundays of the month
     # (If I want to do iterate through all the Fridays and Sundays of the year, replace "month" by "year")
-    while (current_date.year == next_friday.year) and (current_date.year == next_sunday.year):
+    while (current_date.year == next_friday.year) and (
+        current_date.year == next_sunday.year
+    ):
 
         # API request
         url = "https://api.travelpayouts.com/v1/prices/direct"
-        querystring = {"origin":"HMO","destination":"MEX","depart_date":next_friday.strftime("%Y-%m-%d"),"return_date": next_sunday.strftime("%Y-%m-%d"), "currency":"MXN"}
-        headers = {'x-access-token': api_token}
+        querystring = {
+            "origin": "HMO",
+            "destination": "MEX",
+            "depart_date": next_friday.strftime("%Y-%m-%d"),
+            "return_date": next_sunday.strftime("%Y-%m-%d"),
+            "currency": "MXN",
+        }
+        headers = {"x-access-token": api_token}
         response = requests.request("GET", url, headers=headers, params=querystring)
         data = response.json()
 
         # Check if the response is not empty
-        if data['data']:
+        if data["data"]:
 
             # Extract relevant data from request response
             origin = dict_cities[querystring["origin"]]
             destination = dict_cities[querystring["destination"]]
-            flight_number = data['data'][querystring["destination"]]['0']['flight_number']
-            airline = dict_airlines[data['data'][querystring["destination"]]['0']['airline']]
-            departure_date = data['data'][querystring["destination"]]['0']['departure_at'].split('T')[0]
-            departure_times_temp = data['data'][querystring["destination"]]['0']['departure_at'].split('T')[1].split("-")
-            departure_times = departure_times_temp[0][:5] + "-" + departure_times_temp[1][:5]
-            return_date = data['data'][querystring["destination"]]['0']['return_at'].split('T')[0]
-            return_times_temp = data['data'][querystring["destination"]]['0']['return_at'].split('T')[1].split("-")
+            flight_number = data["data"][querystring["destination"]]["0"][
+                "flight_number"
+            ]
+            airline = dict_airlines[
+                data["data"][querystring["destination"]]["0"]["airline"]
+            ]
+            departure_date = data["data"][querystring["destination"]]["0"][
+                "departure_at"
+            ].split("T")[0]
+            departure_times_temp = (
+                data["data"][querystring["destination"]]["0"]["departure_at"]
+                .split("T")[1]
+                .split("-")
+            )
+            departure_times = (
+                departure_times_temp[0][:5] + "-" + departure_times_temp[1][:5]
+            )
+            return_date = data["data"][querystring["destination"]]["0"][
+                "return_at"
+            ].split("T")[0]
+            return_times_temp = (
+                data["data"][querystring["destination"]]["0"]["return_at"]
+                .split("T")[1]
+                .split("-")
+            )
             return_times = return_times_temp[0][:5] + "-" + return_times_temp[1][:5]
-            price_expiration_utc = str(data['data'][querystring["destination"]]['0']['expires_at'])[:-1]
-    
+            price_expiration_utc = str(
+                data["data"][querystring["destination"]]["0"]["expires_at"]
+            )[:-1]
+
             # Create dictionary with extracted relevant data
             new_row = {
                 "Origin": origin,
@@ -110,10 +136,10 @@ def search_flights(origin, destination, api_token):
                 "Departure_times": departure_times,
                 "Return_date": return_date,
                 "Return_times": return_times,
-                "Price_mxn": data['data'][querystring["destination"]]['0']['price'],
-                "Price_expiration_UTC+0": price_expiration_utc.replace("T", " ")
+                "Price_mxn": data["data"][querystring["destination"]]["0"]["price"],
+                "Price_expiration_UTC+0": price_expiration_utc.replace("T", " "),
             }
-    
+
             # Add dictionary to list
             rows.append(new_row)
 
@@ -127,7 +153,7 @@ def search_flights(origin, destination, api_token):
     df = pd.DataFrame(rows)
 
     # Reorder columns
-    #df = df[['Origin', 'Destination', 'Flight_number', 'Airline', 'Departure_date', 'Departure_times', 'Return_date', 'Return_times', 'Price_mxn', 'Price_expiration_UTC+0']]
+    # df = df[['Origin', 'Destination', 'Flight_number', 'Airline', 'Departure_date', 'Departure_times', 'Return_date', 'Return_times', 'Price_mxn', 'Price_expiration_UTC+0']]
 
     # Print Dataframe
     return df
