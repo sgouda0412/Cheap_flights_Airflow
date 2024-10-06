@@ -4,6 +4,7 @@ import requests
 import pandas as pd
 import logging
 import os
+import sys
 
 # Dictionary of airlines IATA codes
 dict_airlines = {"AM": "Aeromexico", "Y4": "Volaris", "VB": "VivaAerobus"}
