@@ -1,26 +1,23 @@
 try:
     # Import libraries
-    from flights_searcher import search_flights  # Function for API request
-    from datetime import timedelta, datetime
+    from datetime import datetime, timedelta
+
     from airflow import DAG
-    from airflow.operators.python_operator import (
-        PythonOperator,
-    )  # Python operator to execute functions
-    from airflow.operators.email_operator import (
-        EmailOperator,
-    )  # Email operator to send email
-    from airflow.operators.python_operator import (
-        BranchPythonOperator,
-    )  # Branch operator to check conditions
-    from airflow.operators.dummy_operator import (
-        DummyOperator,
-    )  # Dummy operator to do nothing when condition fail
-    from airflow.models.variable import (
+    from airflow.models.variable import (  # Function to get environmental variables from airflow
         Variable,
-    )  # Function to get environmental variables from airflow
+    )
+    from airflow.operators.dummy_operator import (  # Dummy operator to do nothing when condition fail
+        DummyOperator,
+    )
+    from airflow.operators.email_operator import (  # Email operator to send email
+        EmailOperator,
+    )
+    from airflow.operators.python import BranchPythonOperator, PythonOperator
 
     # Setting up Triggers
     from airflow.utils.trigger_rule import TriggerRule
+
+    from flights_searcher import search_flights  # Function for API request
 
     print("All Dag modules are ok ......")
 
@@ -59,9 +56,8 @@ with DAG(
         "owner": "airflow",
         "start_date": datetime(2024, 4, 10),  # First date of execution
         "retries": 1,
-        "retry_delay": timedelta(
-            minutes=1
-        ),  # How much time must pass to re-run after failure
+        # How much time must pass to re-run after failure
+        "retry_delay": timedelta(minutes=1),
         "on_failure_callback": on_failure_callback,
         "email": ["jc.barreras.maldonado@gmail.com"],
         "email_on_failure": False,
