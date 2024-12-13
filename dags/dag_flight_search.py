@@ -1,5 +1,5 @@
-try:
-    # Import libraries
+  # Import libraries
+    import collections
     from flights_searcher import search_flights                         # Function for API request
     from datetime import timedelta, datetime
     from airflow import DAG
