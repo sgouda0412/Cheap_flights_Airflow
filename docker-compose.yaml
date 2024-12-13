@@ -43,6 +43,7 @@
 #                                Default: ''
 #
 # Feel free to modify this file to suit your needs.
+# Feels good
 ---
 x-airflow-common:
   &airflow-common
