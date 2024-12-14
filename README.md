@@ -14,5 +14,5 @@ In general terms, the project consists of developing and implementing a data pip
 2.- **Evaluate_flight_prices:** the prices of these flights are evaluated with respect to a predetermined threshold.
  
 3a.- **Send_email:** this task is executed only when the second task has found one or more flights whose price is below the threshold. It consists of sending a notification by mail with the information of cheap flights.
-
+This is added in the read me
 3b.- **Do_nothing:** this is a dummy task that does nothing and is executed only when the second task has found no flight whose price is below the threshold.
